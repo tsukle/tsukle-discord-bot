@@ -2,7 +2,8 @@ const info = require('./info.json');
 const Discord = require('discord.js');
 const Client = new Discord.Client();
 
-const bannablewordlist = ["nigger", "faggot", "nigga", "paki", "nigg3r", "n1gg3r", "n1gger", "cunt", "dyke", "dyk3"];
+//If these words are found an instant timeout is to be given.
+const bannablewordlist = ["nigger", "faggot", "nigga", "n1gga", "n1gg4", "nigg4", "paki", "nigg3r", "n1gg3r", "n1gger", "cunt", "dyke", "dyk3"];
 const roles = {
         'Tsukle': '326831922774933504',
         'Administrators': '326832208486727680',
@@ -11,7 +12,7 @@ const roles = {
         'Timeout': '326924318325866496'
       };
 
-//Ready Funytion (required)
+//Ready Function (required)
 Client.on('ready', () => {
   console.log("Bot is ready...");
   Client.user.setGame("!commands");
