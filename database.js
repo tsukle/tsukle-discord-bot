@@ -39,5 +39,29 @@ module.exports = {
             statement.run(command);
             statement.finalize();
         });
+    },
+
+    /*
+        AUTHOR: Emilis Tobulevicius
+        DESCRIPTION: findCommand checks the database for a supplied Command, if its there it returns the response. If not it will return a failure message.
+        DATE: 23/06/17
+    */
+    findCommand: function (command, callback){
+        db.serialize(() => {
+            let statement = db.prepare("SELECT * FROM commands WHERE command = ?");
+            statement.get(command, (err, row) => {
+                if (err){
+                    console.log(err);
+                    callback(null);
+                }
+                else if(row === undefined){
+                    callback(null);
+                }
+                else{
+                    callback(row);
+                }
+            });
+            statement.finalize();
+        });
     }
 }

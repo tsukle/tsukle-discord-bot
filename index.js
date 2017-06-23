@@ -79,13 +79,28 @@ Client.on('message', message =>{
 
     //Deleting Commands | !delCommand commandName
     else if(command === "delCommand" && message.member.user.id === message.member.guild.owner.id){
-      let command = message.content.split(" ").slice(1)[0];
-      db.removeCommand(command);
+      let commandToRemove = message.content.split(" ").slice(1)[0];
+      message.channel.send(`Removing command - ${commandToRemove} - from the database`);
+      db.removeCommand(commandToRemove);
     }
 
     /*
-      @everyone Commands
+      Other Commands
     */
+
+    else{
+      db.findCommand(command, (result) =>{
+        if(result === null){
+          return;
+        }
+        else{
+          message.channel.send(`${result.response} (${message.author})`);
+        }
+      });
+    }
+
+    /*
+      @everyone Commands TODO: GET RID OF THIS AND HAVE THE DB CHECK FOR THE COMMAND.
     if(command === "twitch"){
       setTimeout(() =>{
         message.channel.send(`You can find me on Twitch over at: https://twitch.tv/tsukle ! (${message.author})`)
@@ -133,6 +148,7 @@ Client.on('message', message =>{
           .catch(console.error);
       }, 500);
     }
+    */
   }
 });
 
