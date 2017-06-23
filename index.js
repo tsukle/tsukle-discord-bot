@@ -84,71 +84,40 @@ Client.on('message', message =>{
       db.removeCommand(commandToRemove);
     }
 
-    /*
-      Other Commands
-    */
-
-    else{
-      db.findCommand(command, (result) =>{
-        if(result === null){
-          return;
+    //list Commands
+    else if(command === "commands" && message.member.user.id === message.member.guild.owner.id){
+      db.currentCommands((result) => {
+        let commandList = "";
+        for(i in result){
+          commandList = `${commandList}\n!` + result[i];
         }
-        else{
-          message.channel.send(`${result.response} (${message.author})`);
-        }
+        message.channel.send(`Current commands: ${commandList}\n(${message.author})`);
       });
     }
 
     /*
-      @everyone Commands TODO: GET RID OF THIS AND HAVE THE DB CHECK FOR THE COMMAND.
-    if(command === "twitch"){
-      setTimeout(() =>{
-        message.channel.send(`You can find me on Twitch over at: https://twitch.tv/tsukle ! (${message.author})`)
-          .then(msg => console.log(Chalk.blue.bgYellow(`Replied to: ${message.author.username}`)))
-          .catch(console.error);
-      }, 500);
-    }
-
-    if(command === "twitter"){
-      setTimeout(() => {
-        message.channel.send(`Catch my tweets at: https://twitter.com/tsukle ! (${message.author})`)
-          .then(msg => console.log(Chalk.blue.bgYellow(`Replied to: ${message.author.username}`)))
-          .catch(console.error);
-      }, 500);
-    }
-
-    if(command === "website"){
-      setTimeout(() => {
-        message.channel.send(`Check out my website at: https://tsukle.com ! (${message.author})`)
-          .then(msg => console.log(Chalk.blue.bgYellow(`Replied to: ${message.author.username}`)))
-          .catch(console.error);
-      }, 500);
-    }
-
-    if(command === "twpy"){
-      setTimeout(() => {
-        message.channel.send(`Check out my twpy at: https://twpy.uk ! (${message.author})`)
-          .then(msg => console.log(Chalk.blue.bgYellow(`Replied to: ${message.author.username}`)))
-          .catch(console.error);
-      }, 500);
-    }
-
-    if(command === "invite"){
-      setTimeout(() => {
-        message.channel.send(`Send this to your friends: https://discordapp.com/invite/QhdtEzu ! (${message.author})`)
-          .then(msg => console.log(Chalk.blue.bgYellow(`Replied to: ${message.author.username}`)))
-          .catch(console.error);
-      }, 500);
-    }
-
-    if(command === "commands"){
-      setTimeout(() => {
-        message.channel.send(`Commands:\n!twitch\n!twitter\n!website\n!twpy\n!invite\n(${message.author})`)
-          .then(msg => console.log(Chalk.blue.bgYellow(`Replied to: ${message.author.username}`)))
-          .catch(console.error);
-      }, 500);
-    }
+      Other Commands
     */
+    else{
+      db.findCommand(command, (result) =>{
+        let guild = message.member.guild;
+        let userRole = guild.roles.find("name", result.role);
+        if(result === null){
+          return;
+        }
+        else{
+          if(result.role === "All"){
+            message.channel.send(`${result.response} (${message.author})`);
+          }
+          else if(message.member.roles.has(userRole.id)){
+            message.channel.send(`${result.response} (${message.author})`);
+          }
+          else{
+            return;
+          }
+        }
+      });
+    }
   }
 });
 

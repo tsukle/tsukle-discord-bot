@@ -63,5 +63,27 @@ module.exports = {
             });
             statement.finalize();
         });
-    }
+    },
+
+    currentCommands: function (callback){
+        db.serialize(() => {
+            let statement = db.prepare("SELECT rowid AS id, command FROM commands");
+            statement.all((err, rows) => {
+                if(err){
+                    console.log(err);
+                    callback(null);
+                }
+                else if(rows === undefined){
+                    callback(null);
+                }
+                else{
+                    let sortedArray = rows.map((rows) => {
+                        return rows.command;
+                    })
+                    callback(sortedArray);
+                }
+            });
+            statement.finalize();
+        });
+    },
 }
