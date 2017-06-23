@@ -23,6 +23,7 @@ const roles = {
   DATE: 23/06/17
 */
 Client.on('ready', () => {
+  db.createTable();
   console.log("...");
   Client.user.setGame("!commands");
   Client.user.setUsername("tsukleBot");
