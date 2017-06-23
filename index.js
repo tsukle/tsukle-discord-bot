@@ -60,23 +60,35 @@ Client.on('message', message =>{
     }
   }
 
-  let arguments = message.content.split(" ").slice(1);
-  console.log(arguments);
-  let command = message.content.split(" ")[0];
-  command = command.slice(prefix.length);
-
   if(message.content.startsWith(prefix)){
+    let command = message.content.split(" ")[0].slice(prefix.length);
+    
+    /*
+      Owner Commands
+    */
+    
+    //Adding Commands | !addCommand <command> <role> response
+    if(command === "addCommand" && message.member.user.id === message.member.guild.owner.id){
+      let arguments = message.content.split("<").slice(1);
+      let commandToAdd = arguments[0].split(">")[0];
+      let roleToAdd = arguments[1].split(">")[0];
+      let responseToAdd = arguments[1].split("> ").slice(1).join(" ");
+      message.channel.send(`Adding command - ${commandToAdd} - to the database for the role - ${roleToAdd}`);
+      db.addCommand(commandToAdd, roleToAdd, responseToAdd);
+    }
+
+    //Deleting Commands | !delCommand commandName
+    else if(command === "delCommand" && message.member.user.id === message.member.guild.owner.id){
+      let command = message.content.split(" ").slice(1)[0];
+      db.removeCommand(command);
+    }
+
+    /*
+      @everyone Commands
+    */
     if(command === "twitch"){
       setTimeout(() =>{
         message.channel.send(`You can find me on Twitch over at: https://twitch.tv/tsukle ! (${message.author})`)
-          .then(msg => console.log(Chalk.blue.bgYellow(`Replied to: ${message.author.username}`)))
-          .catch(console.error);
-      }, 500);
-    }
-
-    if(command === "invite"){
-      setTimeout(() => {
-        message.channel.send(`Send this to your friends: https://discordapp.com/invite/QhdtEzu ! (${message.author})`)
           .then(msg => console.log(Chalk.blue.bgYellow(`Replied to: ${message.author.username}`)))
           .catch(console.error);
       }, 500);
@@ -106,15 +118,20 @@ Client.on('message', message =>{
       }, 500);
     }
 
+    if(command === "invite"){
+      setTimeout(() => {
+        message.channel.send(`Send this to your friends: https://discordapp.com/invite/QhdtEzu ! (${message.author})`)
+          .then(msg => console.log(Chalk.blue.bgYellow(`Replied to: ${message.author.username}`)))
+          .catch(console.error);
+      }, 500);
+    }
+
     if(command === "commands"){
       setTimeout(() => {
         message.channel.send(`Commands:\n!twitch\n!twitter\n!website\n!twpy\n!invite\n(${message.author})`)
           .then(msg => console.log(Chalk.blue.bgYellow(`Replied to: ${message.author.username}`)))
           .catch(console.error);
       }, 500);
-    }
-
-    if(command === "test"){
     }
   }
 });
