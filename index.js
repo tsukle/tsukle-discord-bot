@@ -16,7 +16,6 @@ const roles = {
   'Timeout': '326924318325866496'
 };
 
-
 /*
   AUTHOR: Emilis Tobulevicius
   DESCRIPTION: The ready event must be called. If it is not called the rest of the events do not start emitting.
@@ -35,7 +34,7 @@ Client.on('ready', () => {
   DATE: 23/06/17
 */
 Client.on('guildMemberAdd', member => {
-  const channel = member.guild.channels.find('name', 'bot-testing');
+  const channel = member.guild.channels.find('name', 'mew-members');
   const channel2 = member.guild.channels.find('name', 'welcome');
   if (!channel) return;
   channel.send({embed: {
@@ -55,7 +54,6 @@ Client.on('guildMemberAdd', member => {
     }
   }});
 });
-
 
 /*
   AUTHOR: Emilis Tobulevicius
