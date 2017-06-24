@@ -89,6 +89,13 @@ Client.on('presenceUpdate', (oldMember, newMember) => {
         newMember.removeRoles(roleArray).catch(console.error);
     }
   }
+  else if(!game){
+    for(i in roleArray){
+      if(newMember.roles.has(roleArray[i].id)){
+        newMember.removeRole(roleArray[i]);
+      }
+    }
+  }
 });
 
 /*
