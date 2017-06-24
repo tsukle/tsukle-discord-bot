@@ -8,13 +8,13 @@ const Chalk = require('chalk');
 const prefix = "!";
 const bannablewordlist = badwords.words;
 const roles = {
-        'Tsukle': '326831922774933504',
-        'Administrators': '326832208486727680',
-        'Moderators': '326832940979978241',
-        'Spicy': '326831645481238531',
-        'DedicatedFollower': '327108020112719872',
-        'Timeout': '326924318325866496'
-      };
+  'Tsukle': '326831922774933504',
+  'Administrators': '326832208486727680',
+  'Moderators': '326832940979978241',
+  'Spicy': '326831645481238531',
+  'DedicatedFollower': '327108020112719872',
+  'Timeout': '326924318325866496'
+};
 
 
 /*
@@ -41,6 +41,12 @@ Client.on('guildMemberAdd', member => {
   channel.send(`Hey ${member}!, welcome to the server. Check out ${channel2} for the rules!`);
 });
 
+
+/*
+  AUTHOR: Emilis Tobulevicius
+  DESCRIPTION: The presenceUpdate event emits when a users presence change, aka game changes or online presence.
+  DATE: 24/06/17
+*/
 Client.on('presenceUpdate', (oldMember, newMember) => {
   console.log("fired");
   let guild = newMember.guild;
@@ -129,7 +135,7 @@ Client.on('message', message =>{
     }
 
     //list Commands
-    else if(command === "commands" && message.member.user.id === message.member.guild.owner.id){
+    else if(command === "commands"){
       db.currentCommands((result) => {
         let commandList = "";
         for(i in result){
