@@ -71,20 +71,19 @@ Client.on('presenceUpdate', (oldMember, newMember) => {
       announcementChannel.send({embed: {
         color: 15253548,
         author: {
-          name: newMember.user.username,
-          icon_url: newMember.user.avatarURL
+          name: "Stream announcement!",
+          icon_url: Client.user.avatarURL
         },
         thumbnail: {
           url: newMember.user.avatarURL
         },
-        description: `Hey! ${newMember.user.username} is streaming right now! Come join in: ${game.url}`,
+        description: `Hey! ${newMember.user} is streaming right now! Come join in: ${game.url}`,
         timestamp: new Date(),
         footer: {
-          icon_url: Client.user.avatarURL,
           text: "Have a good stream!"
         }
       }});
-    }
+    } else return;
   }
   if(game){
     for(i in roleArray){
