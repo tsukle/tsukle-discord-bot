@@ -1,5 +1,6 @@
 info.json
 badwords.json
 start.bat
+commands.db
 package-lock.json
 node_modules/

@@ -1,20 +1,11 @@
 const config = require('./info.json');
-const badwords = require('./badwords.json');
+//const badwords = require('./badwords.json');
 const db = require('./database.js');
 const Discord = require('discord.js');
 const Client = new Discord.Client();
 const Chalk = require('chalk');
 
 const prefix = "!";
-const bannablewordlist = badwords.words;
-const roles = {
-  'Tsukle': '326831922774933504',
-  'Administrators': '326832208486727680',
-  'Moderators': '326832940979978241',
-  'Spicy': '326831645481238531',
-  'DedicatedFollower': '327108020112719872',
-  'Timeout': '326924318325866496'
-};
 
 /*
   AUTHOR: Emilis Tobulevicius
@@ -34,7 +25,7 @@ Client.on('ready', () => {
   DATE: 23/06/17
 */
 Client.on('guildMemberAdd', member => {
-  const channel = member.guild.channels.find('name', 'mew-members');
+  const channel = member.guild.channels.find('name', 'new-members');
   const channel2 = member.guild.channels.find('name', 'welcome');
   if (!channel) return;
   channel.send({embed: {
@@ -57,7 +48,7 @@ Client.on('guildMemberAdd', member => {
 
 /*
   AUTHOR: Emilis Tobulevicius
-  DESCRIPTION: The presenceUpdate event emits when a users presence change, aka game changes or online presence.
+  DESCRIPTION: The presenceUpdate event emits when a users presence change, aka game changes(includes streaming) or online presence.
   DATE: 24/06/17
 */
 Client.on('presenceUpdate', (oldMember, newMember) => {
@@ -69,10 +60,32 @@ Client.on('presenceUpdate', (oldMember, newMember) => {
   let H1Z1 = guild.roles.find("name", "Playing H1Z1");
   let GTAV = guild.roles.find("name", "Playing GTA:V");
   let LOL = guild.roles.find("name", "Playing LOL");
+  let Streamer = guild.roles.find("name", "Streamer");
+  let Tsukle = guild.roles.find("name", "Tsukle");
   let roleArray = [Overwatch, PUBG, CSGO, H1Z1, GTAV, LOL];
+  const announcementChannel = member.guild.channels.find('name', 'announcements');
 
   let game = newMember.user.presence.game;
-
+  if(game.streaming === true){
+    if(newMember.roles.has(Streamer.id) || newMember.roles.has(Tsukle.id)){
+      announcementChannel.send({embed: {
+        color: 15253548,
+        author: {
+          name: newMember.user.username,
+          icon_url: newMember.user.avatarURL
+        },
+        thumbnail: {
+          url: newMember.user.avatarURL
+        },
+        description: `Hey! ${newMember.user.username} is streaming right now! Come join in: ${game.url}`,
+        timestamp: new Date(),
+        footer: {
+          icon_url: Client.user.avatarURL,
+          text: "Have a good stream!"
+        }
+      }});
+    }
+  }
   if(game){
     for(i in roleArray){
       if(newMember.roles.has(roleArray[i].id)){
@@ -118,18 +131,6 @@ Client.on('presenceUpdate', (oldMember, newMember) => {
 */
 Client.on('message', message =>{
   if(message.author.bot) return;
-
-  //Check every message for banned words.
-  for(i in bannablewordlist){
-    if(message.content.toLowerCase().includes(bannablewordlist[i])){
-      message.author.send(`You have been timed out for using a flagged word. Read the rules of the server and then message ${message.member.guild.owner} to get your roles back.`);
-      message.member.guild.owner.send(`This user has been timed out for using a flagged word: ${message.author}`);
-      message.member.removeRoles([roles.Spicy, roles.DedicatedFollower]);
-      message.member.addRole(roles.Timeout);
-      message.delete();
-    }
-  }
-
   if(message.content.startsWith(prefix)){
     let command = message.content.split(" ")[0].slice(prefix.length);
     
