@@ -14,7 +14,20 @@ const prefix = "!";
 */
 Client.on('ready', () => {
   db.createTable();
-  console.log("...");
+  const guild = Client.guilds.find('name', 'tsukle');
+  const channel = guild.channels.find('name', 'general');
+  channel.send({embed: {
+    color: 15253548,
+    thumbnail: {
+      url: Client.user.avatarURL
+    },
+    description: `Bot online.`,
+    timestamp: new Date(),
+    footer: {
+      icon_url: Client.user.avatarURL,
+      text: "Invite your friends!"
+    }
+  }});
   Client.user.setGame("!commands");
   Client.user.setUsername("tsukleBot");
 });
@@ -52,7 +65,6 @@ Client.on('guildMemberAdd', member => {
   DATE: 24/06/17
 */
 Client.on('presenceUpdate', (oldMember, newMember) => {
-  console.log("fired");
   let guild = newMember.guild;
   let Overwatch = guild.roles.find("name", "Playing Overwatch");
   let PUBG = guild.roles.find("name", "Playing PUBG");
@@ -63,29 +75,30 @@ Client.on('presenceUpdate', (oldMember, newMember) => {
   let Streamer = guild.roles.find("name", "Streamer");
   let Tsukle = guild.roles.find("name", "Tsukle");
   let roleArray = [Overwatch, PUBG, CSGO, H1Z1, GTAV, LOL];
-  const announcementChannel = member.guild.channels.find('name', 'announcements');
+  const announcementChannel = newMember.guild.channels.find('name', 'announcements');
 
   let game = newMember.user.presence.game;
-  if(game.streaming === true){
-    if(newMember.roles.has(Streamer.id) || newMember.roles.has(Tsukle.id)){
-      announcementChannel.send({embed: {
-        color: 15253548,
-        author: {
-          name: "Stream announcement!",
-          icon_url: Client.user.avatarURL
-        },
-        thumbnail: {
-          url: newMember.user.avatarURL
-        },
-        description: `Hey! ${newMember.user} is streaming right now! Come join in: ${game.url}`,
-        timestamp: new Date(),
-        footer: {
-          text: "Have a good stream!"
-        }
-      }});
-    } else return;
-  }
   if(game){
+    let stream = newMember.user.presence.game.streaming;
+    if(stream === true){
+      if(newMember.roles.has(Streamer.id) || newMember.roles.has(Tsukle.id)){
+        announcementChannel.send({embed: {
+          color: 15253548,
+          author: {
+            name: "Stream announcement!",
+            icon_url: Client.user.avatarURL
+          },
+          thumbnail: {
+            url: newMember.user.avatarURL
+          },
+          description: `Hey! ${newMember.user} is streaming right now! Come join in: ${game.url}`,
+          timestamp: new Date(),
+          footer: {
+            text: "Have a good stream!"
+          }
+        }});
+      } else return;
+    }
     for(i in roleArray){
       if(newMember.roles.has(roleArray[i].id)){
         newMember.removeRole(roleArray[i]);
