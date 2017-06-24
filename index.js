@@ -41,6 +41,50 @@ Client.on('guildMemberAdd', member => {
   channel.send(`Hey ${member}!, welcome to the server. Check out ${channel2} for the rules!`);
 });
 
+Client.on('presenceUpdate', (oldMember, newMember) => {
+  console.log("fired");
+  let guild = newMember.guild;
+  let Overwatch = guild.roles.find("name", "Playing Overwatch");
+  let PUBG = guild.roles.find("name", "Playing PUBG");
+  let CSGO = guild.roles.find("name", "Playing CSGO");
+  let H1Z1 = guild.roles.find("name", "Playing H1Z1");
+  let GTAV = guild.roles.find("name", "Playing GTA:V");
+  let LOL = guild.roles.find("name", "Playing LOL");
+  let roleArray = [Overwatch, PUBG, CSGO, H1Z1, GTAV, LOL];
+
+  let game = newMember.user.presence.game;
+
+  if(game){
+    for(i in roleArray){
+      if(newMember.roles.has(roleArray[i].id)){
+        newMember.removeRole(roleArray[i]);
+      }
+    }
+    switch (game.name){
+      case "Overwatch":
+        newMember.addRole(Overwatch).catch(console.error);
+        break;
+      case "PUBG":
+        newMember.addRole(PUBG).catch(console.error);
+        break;
+      case "Counter-Strike: Global Offensive":
+        newMember.addRole(CSGO).catch(console.error);
+        break;
+      case "H1Z1: King of the Kill":
+        newMember.addRole(H1Z1).catch(console.error);
+        break;
+      case "Grand Theft Auto V":
+        newMember.addRole(GTAV).catch(console.error);
+        break;
+      case "League of Legends":
+        newMember.addRole(LOL).catch(console.error);
+        break;
+      default:
+        newMember.removeRoles(roleArray).catch(console.error);
+    }
+  }
+});
+
 /*
   AUTHOR: Emilis Tobulevicius
   DESCRIPTION: The message event gets emitted when a message is sent in the server. It also gives us a list of properties to work with from the message.
