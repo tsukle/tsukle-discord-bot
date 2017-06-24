@@ -65,6 +65,11 @@ module.exports = {
         });
     },
 
+    /*
+        AUTHOR: Emilis Tobulevicius
+        DESCRIPTION: currentCommand callbacks a list of all of the commands currently in the database.
+        DATE: 24/06/17
+    */
     currentCommands: function (callback){
         db.serialize(() => {
             let statement = db.prepare("SELECT rowid AS id, command FROM commands");
