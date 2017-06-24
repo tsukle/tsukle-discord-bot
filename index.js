@@ -35,10 +35,25 @@ Client.on('ready', () => {
   DATE: 23/06/17
 */
 Client.on('guildMemberAdd', member => {
-  const channel = member.guild.channels.find('name', 'general');
+  const channel = member.guild.channels.find('name', 'bot-testing');
   const channel2 = member.guild.channels.find('name', 'welcome');
   if (!channel) return;
-  channel.send(`Hey ${member}!, welcome to the server. Check out ${channel2} for the rules!`);
+  channel.send({embed: {
+    color: 15253548,
+    author: {
+      name: member.user.username,
+      icon_url: member.user.avatarURL
+    },
+    thumbnail: {
+      url: member.user.avatarURL
+    },
+    description: `Thanks for joining ${member}!. Check out ${channel2} for the rules!`,
+    timestamp: new Date(),
+    footer: {
+      icon_url: Client.user.avatarURL,
+      text: "Invite your friends!"
+    }
+  }});
 });
 
 
