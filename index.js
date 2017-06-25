@@ -215,10 +215,10 @@ Client.on('message', message =>{
 
     //list Commands
     else if(command === "commands"){
-      db.currentCommands((result) => {
+      db.currentCommands((commands) => {
         let commandList = "";
-        for(i in result){
-          commandList = `${commandList}\n!` + result[i];
+        for(i in commands){
+          commandList = `${commandList}\n!${commands[i]}`;
         }
         message.channel.send({embed: {
           color: 15253548,
@@ -242,7 +242,7 @@ Client.on('message', message =>{
       db.findCommand(command, (result) =>{
         let guild = message.member.guild;
         let userRole = guild.roles.find("name", result.role);
-        if(result === null){
+        if(result === null || userRole === null){
           return;
         }
         else{

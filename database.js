@@ -72,7 +72,7 @@ module.exports = {
     */
     currentCommands: function (callback){
         db.serialize(() => {
-            let statement = db.prepare("SELECT rowid AS id, command FROM commands");
+            let statement = db.prepare("SELECT rowid AS id, command, role FROM commands ORDER BY role ASC");
             statement.all((err, rows) => {
                 if(err){
                     console.log(err);
@@ -82,10 +82,10 @@ module.exports = {
                     callback(null);
                 }
                 else{
-                    let sortedArray = rows.map((rows) => {
-                        return rows.command;
+                    let commandArray = rows.map((rows) => {
+                        return `${rows.command} - ${rows.role}`;
                     })
-                    callback(sortedArray);
+                    callback(commandArray);
                 }
             });
             statement.finalize();
