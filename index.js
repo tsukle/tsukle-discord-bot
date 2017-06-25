@@ -6,6 +6,7 @@ const Client = new Discord.Client();
 const Chalk = require('chalk');
 
 const prefix = "!";
+const helpPrefix = "?";
 
 /*
   AUTHOR: Emilis Tobulevicius
@@ -17,7 +18,7 @@ Client.on('ready', () => {
   const guild = Client.guilds.find('name', 'tsukle');
   const channel = guild.channels.find('name', 'bot-testing');
   channel.send({embed: {
-    color: 15253548,
+    color: 0xffff00,
     title: "Bot online!",
     description: `Hey I'm in the chat now!`,
     timestamp: new Date(),
@@ -26,7 +27,7 @@ Client.on('ready', () => {
       text: "Invite your friends!"
     }
   }});
-  Client.user.setGame("!commands");
+  Client.user.setGame("?help", "https://twitch.tv/tsukle");
   Client.user.setUsername("tsukleBot");
 });
 
@@ -40,7 +41,7 @@ Client.on('guildMemberAdd', member => {
   const channel2 = member.guild.channels.find('name', 'welcome');
   if (!channel) return;
   channel.send({embed: {
-    color: 15253548,
+    color: 0xffff00,
     author: {
       name: member.user.username,
       icon_url: member.user.avatarURL
@@ -90,7 +91,7 @@ Client.on('presenceUpdate', (oldMember, newMember) => {
     if(stream === true){
       if(newMember.roles.has(Streamer.id) || newMember.roles.has(Tsukle.id)){
         announcementChannel.send({embed: {
-          color: 15253548,
+          color: 0xffff00,
           author: {
             name: "Stream announcement!",
             icon_url: Client.user.avatarURL
@@ -182,7 +183,7 @@ Client.on('message', message =>{
       let roleToAdd = arguments[1].split(">")[0];
       let responseToAdd = arguments[1].split("> ").slice(1).join(" ");
       message.channel.send({embed: {
-          color: 15253548,
+          color: 0xffff00,
           author: {
             name: "New Command!",
             icon_url: Client.user.avatarURL
@@ -200,7 +201,7 @@ Client.on('message', message =>{
     else if(command === "delCommand" && message.member.user.id === message.member.guild.owner.id){
       let commandToRemove = message.content.split(" ").slice(1)[0];
       message.channel.send({embed: {
-          color: 15253548,
+          color: 0xffff00,
           author: {
             name: "Removed Command!",
             icon_url: Client.user.avatarURL
@@ -214,6 +215,47 @@ Client.on('message', message =>{
       db.removeCommand(commandToRemove);
     }
 
+    //Kick User.
+    else if(command === "kick" && message.member.user.id === message.member.guild.owner.id){
+      let kickee = message.mentions.users.first();
+      message.guild.member(kickee).kick().catch(console.error);
+    }
+
+    //Message Purge.
+    else if(command === "purge" && message.member.user.id === message.member.guild.owner.id){
+      let argument = message.content.split(" ").slice(1)[0];
+      let messageCount = parseInt(argument);
+      if(messageCount === 1 || messageCount === 2){
+        message.channel.send({embed: {
+          color: 0xffff00,
+          author: {
+            name: `${prefix}${command}`,
+            icon_url: Client.user.avatarURL
+          },
+          description: `Please use a number higher than 1 or 2.`,
+          timestamp: new Date(),
+          footer: {
+            text: `More!`
+          }
+        }});
+      }
+      else{
+        message.channel.fetchMessages({limit: messageCount}).then(messages => message.channel.bulkDelete(messages));
+        message.channel.send({embed: {
+          color: 0xffff00,
+          author: {
+            name: `${prefix}${command}`,
+            icon_url: Client.user.avatarURL
+          },
+          description: `Purged ${messageCount} messages.`,
+          timestamp: new Date(),
+          footer: {
+            text: `Later spam!`
+          }
+        }});
+      }
+    }
+
     //list Commands
     else if(command === "commands"){
       db.currentCommands((commands) => {
@@ -222,7 +264,7 @@ Client.on('message', message =>{
           commandList = `${commandList}\n!${commands[i]}`;
         }
         message.channel.send({embed: {
-          color: 15253548,
+          color: 0xffff00,
           author: {
             name: "Current Commands!",
             icon_url: Client.user.avatarURL
@@ -252,7 +294,7 @@ Client.on('message', message =>{
           }
           if(result.role === "All"){
             message.channel.send({embed: {
-              color: 15253548,
+              color: 0xffff00,
               author: {
                 name: `${prefix}${command}`,
                 icon_url: Client.user.avatarURL
@@ -266,7 +308,7 @@ Client.on('message', message =>{
           }
           else if(message.member.roles.has(userRole.id)){
             message.channel.send({embed: {
-              color: 15253548,
+              color: 0xffff00,
               author: {
                 name: `${prefix}${command}`,
                 icon_url: Client.user.avatarURL
@@ -280,7 +322,7 @@ Client.on('message', message =>{
           }
           else{
             message.channel.send({embed: {
-              color: 15253548,
+              color: 0xffff00,
               author: {
                 name: `Sorry about that.`,
                 icon_url: Client.user.avatarURL
@@ -296,6 +338,41 @@ Client.on('message', message =>{
         }
       });
     }
+  }
+  else if(message.content.startsWith(helpPrefix)){
+    message.channel.send({embed: {
+      color: 0xffff00,
+      author: {
+        name: `Need some help?`,
+        icon_url: Client.user.avatarURL
+      },
+      thumbnail:{
+        url: Client.user.avatarURL
+      },
+      description: `I'm tsukleBot. Created by ${message.member.guild.owner}, I serve the purpose of helping users in this discord server whether it be through my commands or other means.\n\nTo get you started I'll send you a list of my current commands too, if you want to see them again in the future just use !commands.`,
+      timestamp: new Date(),
+      footer: {
+        text: `Hope I helped!`
+      }
+    }});
+    db.currentCommands((commands) => {
+      let commandList = "";
+      for(i in commands){
+        commandList = `${commandList}\n!${commands[i]}`;
+      }
+      message.channel.send({embed: {
+        color: 0xffff00,
+        author: {
+          name: "Current Commands!",
+          icon_url: Client.user.avatarURL
+        },
+        description: `${commandList}\n(${message.author})`,
+        timestamp: new Date(),
+        footer: {
+          text: `Don't spam them!`
+        }
+      }});
+    });
   }
 });
 
