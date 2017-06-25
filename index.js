@@ -15,12 +15,9 @@ const prefix = "!";
 Client.on('ready', () => {
   db.createTable();
   const guild = Client.guilds.find('name', 'tsukle');
-  const channel = guild.channels.find('name', 'general');
+  const channel = guild.channels.find('name', 'bot-testing');
   channel.send({embed: {
     color: 15253548,
-    thumbnail: {
-      url: Client.user.avatarURL
-    },
     description: `Bot online.`,
     timestamp: new Date(),
     footer: {
@@ -67,7 +64,7 @@ Client.on('guildMemberAdd', member => {
 Client.on('presenceUpdate', (oldMember, newMember) => {
   let guild = newMember.guild;
 
-  //Role List.
+  //Role List. THIS NEEDS TO BE DATABASED. THIS CODE IS UGLY AS FUCK.
   let OW = guild.roles.find("name", "Playing Overwatch");
   let PUBG = guild.roles.find("name", "Playing PUBG");
   let CSGO = guild.roles.find("name", "Playing CSGO");
@@ -189,10 +186,7 @@ Client.on('message', message =>{
             name: "New Command!",
             icon_url: Client.user.avatarURL
           },
-          thumbnail: {
-            url: message.member.user.avatarURL
-          },
-          description: `Adding command - ${commandToAdd} - to the database for the role - ${roleToAdd}`,
+          description: `${prefix}${commandToAdd} has been added to the database.`,
           timestamp: new Date(),
           footer: {
             text: `Use ${prefix}${commandToAdd}.`
@@ -210,13 +204,10 @@ Client.on('message', message =>{
             name: "Removed Command!",
             icon_url: Client.user.avatarURL
           },
-          thumbnail: {
-            url: message.member.user.avatarURL
-          },
-          description: `Removing command - ${commandToRemove} - from the database`,
+          description: `${prefix}${commandToRemove} has been removed from the database.`,
           timestamp: new Date(),
           footer: {
-            text: `${prefix}${commandToAdd} has been removed.`
+            text: `Bye bye.`
           }
         }});
       db.removeCommand(commandToRemove);
@@ -232,16 +223,13 @@ Client.on('message', message =>{
         message.channel.send({embed: {
           color: 15253548,
           author: {
-            name: "Removed Command!",
+            name: "Current Commands!",
             icon_url: Client.user.avatarURL
           },
-          thumbnail: {
-            url: message.member.user.avatarURL
-          },
-          description: `Current commands: ${commandList}\n(${message.author})`,
+          description: `${commandList}\n(${message.author})`,
           timestamp: new Date(),
           footer: {
-            text: `${prefix}${commandToAdd} has been removed.`
+            text: `Don't spam them!`
           }
         }});
       });
@@ -259,12 +247,46 @@ Client.on('message', message =>{
         }
         else{
           if(result.role === "All"){
-            message.channel.send(`${result.response} (${message.author})`);
+            message.channel.send({embed: {
+              color: 15253548,
+              author: {
+                name: `${prefix}${command}`,
+                icon_url: Client.user.avatarURL
+              },
+              description: `${result.response} (${message.author})`,
+              timestamp: new Date(),
+              footer: {
+                text: `You used a command!`
+              }
+            }});
           }
           else if(message.member.roles.has(userRole.id)){
-            message.channel.send(`${result.response} (${message.author})`);
+            message.channel.send({embed: {
+              color: 15253548,
+              author: {
+                name: `${prefix}${command}`,
+                icon_url: Client.user.avatarURL
+              },
+              description: `${result.response} (${message.author})`,
+              timestamp: new Date(),
+              footer: {
+                text: `You used a command!`
+              }
+            }});
           }
           else{
+            message.channel.send({embed: {
+              color: 15253548,
+              author: {
+                name: `Sorry about that.`,
+                icon_url: Client.user.avatarURL
+              },
+              description: `It appears you don't have permission to use this command.`,
+              timestamp: new Date(),
+              footer: {
+                text: `Sorry!`
+              }
+            }});
             return;
           }
         }
