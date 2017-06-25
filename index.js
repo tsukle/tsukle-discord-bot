@@ -183,14 +183,42 @@ Client.on('message', message =>{
       let commandToAdd = arguments[0].split(">")[0];
       let roleToAdd = arguments[1].split(">")[0];
       let responseToAdd = arguments[1].split("> ").slice(1).join(" ");
-      message.channel.send(`Adding command - ${commandToAdd} - to the database for the role - ${roleToAdd}`);
+      message.channel.send({embed: {
+          color: 15253548,
+          author: {
+            name: "New Command!",
+            icon_url: Client.user.avatarURL
+          },
+          thumbnail: {
+            url: message.member.user.avatarURL
+          },
+          description: `Adding command - ${commandToAdd} - to the database for the role - ${roleToAdd}`,
+          timestamp: new Date(),
+          footer: {
+            text: `Use ${prefix}${commandToAdd}.`
+          }
+        }});
       db.addCommand(commandToAdd, roleToAdd, responseToAdd);
     }
 
     //Deleting Commands | !delCommand commandName
     else if(command === "delCommand" && message.member.user.id === message.member.guild.owner.id){
       let commandToRemove = message.content.split(" ").slice(1)[0];
-      message.channel.send(`Removing command - ${commandToRemove} - from the database`);
+      message.channel.send({embed: {
+          color: 15253548,
+          author: {
+            name: "Removed Command!",
+            icon_url: Client.user.avatarURL
+          },
+          thumbnail: {
+            url: message.member.user.avatarURL
+          },
+          description: `Removing command - ${commandToRemove} - from the database`,
+          timestamp: new Date(),
+          footer: {
+            text: `${prefix}${commandToAdd} has been removed.`
+          }
+        }});
       db.removeCommand(commandToRemove);
     }
 
@@ -201,7 +229,21 @@ Client.on('message', message =>{
         for(i in result){
           commandList = `${commandList}\n!` + result[i];
         }
-        message.channel.send(`Current commands: ${commandList}\n(${message.author})`);
+        message.channel.send({embed: {
+          color: 15253548,
+          author: {
+            name: "Removed Command!",
+            icon_url: Client.user.avatarURL
+          },
+          thumbnail: {
+            url: message.member.user.avatarURL
+          },
+          description: `Current commands: ${commandList}\n(${message.author})`,
+          timestamp: new Date(),
+          footer: {
+            text: `${prefix}${commandToAdd} has been removed.`
+          }
+        }});
       });
     }
 
