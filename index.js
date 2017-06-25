@@ -15,10 +15,11 @@ const prefix = "!";
 Client.on('ready', () => {
   db.createTable();
   const guild = Client.guilds.find('name', 'tsukle');
-  const channel = guild.channels.find('name', 'bot-testing');
+  const channel = guild.channels.find('name', 'general');
   channel.send({embed: {
     color: 15253548,
-    description: `Bot online.`,
+    title: "Bot online!",
+    description: `Hey I'm in the chat now!`,
     timestamp: new Date(),
     footer: {
       icon_url: Client.user.avatarURL,
