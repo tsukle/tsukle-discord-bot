@@ -15,7 +15,7 @@ const prefix = "!";
 Client.on('ready', () => {
   db.createTable();
   const guild = Client.guilds.find('name', 'tsukle');
-  const channel = guild.channels.find('name', 'general');
+  const channel = guild.channels.find('name', 'bot-testing');
   channel.send({embed: {
     color: 15253548,
     title: "Bot online!",
@@ -112,7 +112,7 @@ Client.on('presenceUpdate', (oldMember, newMember) => {
       }
     }
     switch (game.name){
-      case "OW":
+      case "Overwatch":
         newMember.addRole(OW).catch(console.error);
         break;
       case "PUBG":
@@ -242,11 +242,14 @@ Client.on('message', message =>{
     else{
       db.findCommand(command, (result) =>{
         let guild = message.member.guild;
-        let userRole = guild.roles.find("name", result.role);
-        if(result === null || userRole === null){
+        if(result === null){
           return;
         }
         else{
+          let userRole = guild.roles.find("name", result.role);
+          if(!userRole && result.role !== "All"){
+            return;
+          }
           if(result.role === "All"){
             message.channel.send({embed: {
               color: 15253548,
