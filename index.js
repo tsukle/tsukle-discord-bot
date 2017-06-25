@@ -66,15 +66,24 @@ Client.on('guildMemberAdd', member => {
 */
 Client.on('presenceUpdate', (oldMember, newMember) => {
   let guild = newMember.guild;
-  let Overwatch = guild.roles.find("name", "Playing Overwatch");
+
+  //Role List.
+  let OW = guild.roles.find("name", "Playing Overwatch");
   let PUBG = guild.roles.find("name", "Playing PUBG");
   let CSGO = guild.roles.find("name", "Playing CSGO");
   let H1Z1 = guild.roles.find("name", "Playing H1Z1");
   let GTAV = guild.roles.find("name", "Playing GTA:V");
   let LOL = guild.roles.find("name", "Playing LOL");
+  let RS = guild.roles.find("name", "Playing Runescape");
+  let MC = guild.roles.find("name", "Playing Minecraft");
+  let HS = guild.roles.find("name", "Playing Hearthstone");
+  let ARMA3 = guild.roles.find("name", "Playing ArmA 3");
+  let ARMA2 = guild.roles.find("name", "Playing ArmA 2");
+  let ARMA2OA = guild.roles.find("name", "Playing ArmA 2:OA");
+  let roleArray = [OW, PUBG, CSGO, H1Z1, GTAV, LOL, RS, MC, HS, ARMA2, ARMA2OA, ARMA3];
+
   let Streamer = guild.roles.find("name", "Streamer");
   let Tsukle = guild.roles.find("name", "Tsukle");
-  let roleArray = [Overwatch, PUBG, CSGO, H1Z1, GTAV, LOL];
   const announcementChannel = newMember.guild.channels.find('name', 'announcements');
 
   let game = newMember.user.presence.game;
@@ -105,8 +114,8 @@ Client.on('presenceUpdate', (oldMember, newMember) => {
       }
     }
     switch (game.name){
-      case "Overwatch":
-        newMember.addRole(Overwatch).catch(console.error);
+      case "OW":
+        newMember.addRole(OW).catch(console.error);
         break;
       case "PUBG":
         newMember.addRole(PUBG).catch(console.error);
@@ -122,6 +131,24 @@ Client.on('presenceUpdate', (oldMember, newMember) => {
         break;
       case "League of Legends":
         newMember.addRole(LOL).catch(console.error);
+        break;
+      case "Runescape 3":
+        newMember.addRole(RS).catch(console.error);
+        break;
+      case "Minecraft":
+        newMember.addRole(MC).catch(console.error);
+        break;
+      case "Hearthstone":
+        newMember.addRole(HS).catch(console.error);
+        break;
+      case "ArmA 2":
+        newMember.addRole(ARMA2).catch(console.error);
+        break;
+      case "ArmA 2: Operation Arrowhead":
+        newMember.addRole(ARMA2OA).catch(console.error);
+        break;
+      case "ArmA 3":
+        newMember.addRole(ARMA3).catch(console.error);
         break;
       default:
         newMember.removeRoles(roleArray).catch(console.error);
