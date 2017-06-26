@@ -1,3 +1,5 @@
+Bot usage.
+
 Everyone: 
     - ! | any command from the command list if their role matches it.
     - ?help | help command.
