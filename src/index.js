@@ -1,6 +1,6 @@
-const config = require('./info.json');
-const commandDB = require('./commandDB.js');
-const roleDB = require('./roleDB.js');
+const config = require('./info/info.json');
+const commandDB = require('./db/commandDB.js');
+const roleDB = require('./db/roleDB.js');
 const Discord = require('discord.js');
 const Client = new Discord.Client();
 const Chalk = require('chalk');
