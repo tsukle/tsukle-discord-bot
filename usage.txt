@@ -1,0 +1,18 @@
+Everyone: 
+    - ! | any command from the command list if their role matches it.
+    - ?help | help command.
+    - !commands | current commands.
+
+ Owner:
+    - !addCommand <command> <role> response | Adding commands to the database.
+    - !delCommand commandName | Delete commands from the database.
+    - !addRole <roleName> <roleID> <roleType> | Adding roles to the database.
+    - !delRole roleName | Deleting roles from the database.
+    - !updateRole <currentRoleName> <newRoleName> <newRoleID> <newRoleType> | Updating roles in the database.
+    - !currentRoles | Show a list of current roles in the database.
+    - !addGame <gameTitle> <gameRole> | Adding games to the database.
+    - !delGame gameTitle | Deleting games from the database.
+    - !updateGame <currentTitle> <newTitle> <newRole> | Updating games in the database.
+    - !currentGames | Show a list of the current games in the database.
+    - !kick @mention | Kicks the user that is mentioned from the server.
+    - !purge x | Purge/Delete x amount of messages from the chat.

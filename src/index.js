@@ -1,10 +1,12 @@
 const config = require('./info/info.json');
 const commandDB = require('./db/commandDB.js');
 const roleDB = require('./db/roleDB.js');
+const gameDB = require('./db/gameDB.js');
 const Discord = require('discord.js');
 const Client = new Discord.Client();
 const Chalk = require('chalk');
 
+const version = "1.1.0";
 const prefix = "!";
 const helpPrefix = "?";
 
@@ -15,12 +17,14 @@ const helpPrefix = "?";
 */
 Client.on('ready', () => {
   commandDB.createTable();
-  const guild = Client.guilds.find('name', 'tsukle-dev');
+  roleDB.createTable();
+  gameDB.createTable();
+  const guild = Client.guilds.find('name', 'tsukle'); //Change this based on server.
   const channel = guild.channels.find('name', 'general');
   channel.send({embed: {
     color: 0xffff00,
     title: "Bot online!",
-    description: `Hello!`,
+    description: `Hello!\nVersion: ${version}`,
     timestamp: new Date(),
     footer: {
       icon_url: Client.user.avatarURL,
@@ -61,105 +65,57 @@ Client.on('guildMemberAdd', member => {
 /*
   AUTHOR: Emilis Tobulevicius
   DESCRIPTION: The presenceUpdate event emits when a users presence change, aka game changes(includes streaming) or online presence.
-  DATE: 24/06/17
+  DATE: 26/06/17
 */
 Client.on('presenceUpdate', (oldMember, newMember) => {
-  let guild = newMember.guild;
-
-  //Role List. THIS NEEDS TO BE DATABASED. THIS CODE IS UGLY AS FUCK.
-  let OW = guild.roles.find("name", "Playing Overwatch");
-  let PUBG = guild.roles.find("name", "Playing PUBG");
-  let CSGO = guild.roles.find("name", "Playing CSGO");
-  let H1Z1 = guild.roles.find("name", "Playing H1Z1");
-  let GTAV = guild.roles.find("name", "Playing GTA:V");
-  let LOL = guild.roles.find("name", "Playing LOL");
-  let RS = guild.roles.find("name", "Playing Runescape");
-  let MC = guild.roles.find("name", "Playing Minecraft");
-  let HS = guild.roles.find("name", "Playing Hearthstone");
-  let ARMA3 = guild.roles.find("name", "Playing ArmA 3");
-  let ARMA2 = guild.roles.find("name", "Playing ArmA 2");
-  let ARMA2OA = guild.roles.find("name", "Playing ArmA 2:OA");
-  let roleArray = [OW, PUBG, CSGO, H1Z1, GTAV, LOL, RS, MC, HS, ARMA2, ARMA2OA, ARMA3];
-
-  let Streamer = guild.roles.find("name", "Streamer");
-  let Tsukle = guild.roles.find("name", "Tsukle");
   const announcementChannel = newMember.guild.channels.find('name', 'announcements');
-
+  let guild = newMember.guild;
   let game = newMember.user.presence.game;
-  if(game){
-    let stream = newMember.user.presence.game.streaming;
-    if(stream === true){
-      if(newMember.roles.has(Streamer.id) || newMember.roles.has(Tsukle.id)){
-        announcementChannel.send({embed: {
-          color: 0xffff00,
-          author: {
-            name: "Stream announcement!",
-            icon_url: Client.user.avatarURL
-          },
-          thumbnail: {
-            url: newMember.user.avatarURL
-          },
-          description: `Hey! ${newMember.user} is streaming right now! Come join in: ${game.url}`,
-          timestamp: new Date(),
-          footer: {
-            text: "Have a good stream!"
+
+  roleDB.findRolesByType("Game", roles =>{
+    let streamRole;
+    let gameRoleArray = [];
+    for(i in roles){
+      gameRoleArray.push(roles[i].roleID);
+    }
+    if(game){
+      clearRoles(newMember, gameRoleArray);
+      if(game.streaming === true){
+        roleDB.findRoleByType("Twitch", role =>{
+          streamRole = role.roleID;
+          if(newMember.roles.has(streamRole)){
+            announcementChannel.send({embed: {
+              color: 0xffff00,
+              author: {
+                name: "Stream announcement!",
+                icon_url: Client.user.avatarURL
+              },
+              thumbnail: {
+                url: newMember.user.avatarURL
+              },
+              description: `Hey! ${newMember.user} is streaming right now! Come join in: ${game.url}`,
+              timestamp: new Date(),
+              footer: {
+                text: "Have a good stream!"
+              }
+            }});
+          } else return;
+        });
+      }
+      gameDB.currentGames(games => {
+        for(i in games){
+          if(game.name === games[i].gameTitle){
+            let role = guild.roles.find("name", games[i].gameRole);
+            if(!role) return;
+            newMember.addRole(role).catch(console.error);
           }
-        }});
-      } else return;
+        }
+      });
     }
-    for(i in roleArray){
-      if(newMember.roles.has(roleArray[i].id)){
-        newMember.removeRole(roleArray[i]);
-      }
+    else if(!game){
+      clearRoles(newMember, gameRoleArray);
     }
-    switch (game.name){
-      case "Overwatch":
-        newMember.addRole(OW).catch(console.error);
-        break;
-      case "PUBG":
-        newMember.addRole(PUBG).catch(console.error);
-        break;
-      case "Counter-Strike: Global Offensive":
-        newMember.addRole(CSGO).catch(console.error);
-        break;
-      case "H1Z1: King of the Kill":
-        newMember.addRole(H1Z1).catch(console.error);
-        break;
-      case "Grand Theft Auto V":
-        newMember.addRole(GTAV).catch(console.error);
-        break;
-      case "League of Legends":
-        newMember.addRole(LOL).catch(console.error);
-        break;
-      case "Runescape 3":
-        newMember.addRole(RS).catch(console.error);
-        break;
-      case "Minecraft":
-        newMember.addRole(MC).catch(console.error);
-        break;
-      case "Hearthstone":
-        newMember.addRole(HS).catch(console.error);
-        break;
-      case "ArmA 2":
-        newMember.addRole(ARMA2).catch(console.error);
-        break;
-      case "ArmA 2: Operation Arrowhead":
-        newMember.addRole(ARMA2OA).catch(console.error);
-        break;
-      case "ArmA 3":
-        newMember.addRole(ARMA3).catch(console.error);
-        break;
-      default:
-        newMember.removeRoles(roleArray).catch(console.error);
-    }
-  }
-  else if(!game){
-    for(i in roleArray){
-      if(newMember.roles.has(roleArray[i].id)){
-        newMember.removeRole(roleArray[i]);
-      }
-    }
-  }
+  });
 });
 
 /*
@@ -173,7 +129,7 @@ Client.on('message', message =>{
     let command = message.content.split(" ")[0].slice(prefix.length);
     
     /*
-      Owner Commands
+      CommandsDB Commands
     */
     
     //Adding Commands | !addCommand <command> <role> response
@@ -213,6 +169,178 @@ Client.on('message', message =>{
           }
         }});
       commandDB.removeCommand(commandToRemove);
+    }
+
+    /*
+      RolesDB Commands
+    */
+
+    //Adding Roles | !addRole <roleName> <roleID> <roleType>
+    if(command === "addRole" && message.member.user.id === message.member.guild.owner.id){
+      let arguments = message.content.split("<").slice(1);
+      let roleToAdd = arguments[0].split(">")[0];
+      let roleIDToAdd = arguments[1].split(">")[0];
+      let roleTypeToAdd = arguments[2].split(">")[0];
+      message.channel.send({embed: {
+          color: 0xffff00,
+          author: {
+            name: "New Role!",
+            icon_url: Client.user.avatarURL
+          },
+          description: `${roleToAdd} - ${roleIDToAdd} - ${roleTypeToAdd} has been added to the database.`,
+          timestamp: new Date(),
+          footer: {
+            text: `Role ${roleToAdd} added.`
+          }
+        }});
+      roleDB.addRole(roleToAdd, roleIDToAdd, roleTypeToAdd);
+    }
+
+    //Deleting Commands | !delRole roleName
+    else if(command === "delRole" && message.member.user.id === message.member.guild.owner.id){
+      let roleToRemove = message.content.split(" ").slice(1)[0];
+      message.channel.send({embed: {
+          color: 0xffff00,
+          author: {
+            name: "Removed Role!",
+            icon_url: Client.user.avatarURL
+          },
+          description: `${roleToRemove} has been removed from the database.`,
+          timestamp: new Date(),
+          footer: {
+            text: `Bye bye.`
+          }
+        }});
+      roleDB.removeRole(roleToRemove);
+    }
+
+    //Updating Roles | !updateRole <currentRoleName> <newRoleName> <newRoleID> <newRoleType>
+    if(command === "updateRole" && message.member.user.id === message.member.guild.owner.id){
+      let arguments = message.content.split("<").slice(1);
+      let currentRoleName = arguments[0].split(">")[0];
+      let newRoleName = arguments[1].split(">")[0];
+      let newRoleID = arguments[2].split(">")[0];
+      let newRoleType = arguments[3].split(">")[0];
+      message.channel.send({embed: {
+          color: 0xffff00,
+          author: {
+            name: "Updated Role!",
+            icon_url: Client.user.avatarURL
+          },
+          description: `This role: ${currentRoleName} - has been updated to these values:\nName: ${newRoleName}\nID: ${newRoleID}\nType: ${newRoleType}`,
+          timestamp: new Date(),
+          footer: {
+            text: `Role ${currentRoleName} updated.`
+          }
+        }});
+      roleDB.updateRole(currentTitle, newTitle, newRole);
+    }
+
+    //Current Roles | !currentRoles
+    else if(command === "currentRoles" && message.member.user.id === message.member.guild.owner.id){
+      roleDB.currentRoles((roles) => {
+        let roleList = "";
+        for(i in roles){
+          roleList = `${roleList}\n${roles[i]}`;
+        }
+        message.channel.send({embed: {
+          color: 0xffff00,
+          author: {
+            name: "Current Games!",
+            icon_url: Client.user.avatarURL
+          },
+          description: `${roleList}\n(${message.author})`,
+          timestamp: new Date(),
+          footer: {
+            text: `Organising People!`
+          }
+        }});
+      });
+    }
+
+    /*
+      GamesDB Commands
+    */
+
+    //Adding Games | !addGame <gameTitle> <gameRole>
+    if(command === "addGame" && message.member.user.id === message.member.guild.owner.id){
+      let arguments = message.content.split("<").slice(1);
+      let gameTitle = arguments[0].split(">")[0];
+      let gameRole = arguments[1].split(">")[0];
+      message.channel.send({embed: {
+          color: 0xffff00,
+          author: {
+            name: "New Game!",
+            icon_url: Client.user.avatarURL
+          },
+          description: `Game added: ${gameTitle}`,
+          timestamp: new Date(),
+          footer: {
+            text: `Game ${gameTitle} added to the database.`
+          }
+        }});
+      gameDB.addGame(gameTitle, gameRole);
+    }
+
+    //Updating Games | !updateGame <currentTitle> <newTitle> <newRole>
+    if(command === "updateGame" && message.member.user.id === message.member.guild.owner.id){
+      let arguments = message.content.split("<").slice(1);
+      let currentTitle = arguments[0].split(">")[0];
+      let newTitle = arguments[1].split(">")[0];
+      let newRole = arguments[2].split(">")[0];
+      message.channel.send({embed: {
+          color: 0xffff00,
+          author: {
+            name: "Updated Game!",
+            icon_url: Client.user.avatarURL
+          },
+          description: `This game: ${currentTitle} - has been updated to these values:\nTitle: ${newTitle}\nRole: ${newRole}`,
+          timestamp: new Date(),
+          footer: {
+            text: `Game ${currentTitle} updated.`
+          }
+        }});
+      gameDB.updateGame(currentTitle, newTitle, newRole);
+    }
+
+    //Deleting Games | !delGame gameTitle
+    else if(command === "delGame" && message.member.user.id === message.member.guild.owner.id){
+      let gameTitle = message.content.split(" ").slice(1)[0];
+      message.channel.send({embed: {
+          color: 0xffff00,
+          author: {
+            name: "Removed Game!",
+            icon_url: Client.user.avatarURL
+          },
+          description: `${gameTitle} has been removed from the database.`,
+          timestamp: new Date(),
+          footer: {
+            text: `Bye bye.`
+          }
+        }});
+      gameDB.removeGame(gameTitle);
+    }
+
+    //Current Games | !currentGames
+    else if(command === "currentGames" && message.member.user.id === message.member.guild.owner.id){
+      gameDB.currentGames((games) => {
+        let gameList = "";
+        for(i in games){
+          gameList = `${gameList}\n${games[i]}`;
+        }
+        message.channel.send({embed: {
+          color: 0xffff00,
+          author: {
+            name: "Current Games!",
+            icon_url: Client.user.avatarURL
+          },
+          description: `${gameList}\n(${message.author})`,
+          timestamp: new Date(),
+          footer: {
+            text: `Pew Pew!`
+          }
+        }});
+      });
     }
 
     //Kick User.
@@ -376,5 +504,15 @@ Client.on('message', message =>{
   }
 });
 
+//Don't want to repeat code so I will call this when I need to clear roles on presence updates.
+function clearRoles(newMember, roleArray){
+  for(i in roleArray){
+    if(newMember.roles.has(roleArray[i])){
+      newMember.removeRole(roleArray[i]).catch(console.error);
+      return;
+    }
+  } 
+}
+
 //This is the bot token that it uses to login.
-Client.login(config.tokenDev);
+Client.login(config.token);
