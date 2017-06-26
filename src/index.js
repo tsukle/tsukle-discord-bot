@@ -1,6 +1,6 @@
 const config = require('./info.json');
-//const badwords = require('./badwords.json');
-const db = require('./database.js');
+const commandDB = require('./commandDB.js');
+const roleDB = require('./roleDB.js');
 const Discord = require('discord.js');
 const Client = new Discord.Client();
 const Chalk = require('chalk');
@@ -14,13 +14,13 @@ const helpPrefix = "?";
   DATE: 23/06/17
 */
 Client.on('ready', () => {
-  db.createTable();
-  const guild = Client.guilds.find('name', 'tsukle');
-  const channel = guild.channels.find('name', 'bot-testing');
+  commandDB.createTable();
+  const guild = Client.guilds.find('name', 'tsukle-dev');
+  const channel = guild.channels.find('name', 'general');
   channel.send({embed: {
     color: 0xffff00,
     title: "Bot online!",
-    description: `Hey I'm in the chat now!`,
+    description: `Hello!`,
     timestamp: new Date(),
     footer: {
       icon_url: Client.user.avatarURL,
@@ -194,7 +194,7 @@ Client.on('message', message =>{
             text: `Use ${prefix}${commandToAdd}.`
           }
         }});
-      db.addCommand(commandToAdd, roleToAdd, responseToAdd);
+      commandDB.addCommand(commandToAdd, roleToAdd, responseToAdd);
     }
 
     //Deleting Commands | !delCommand commandName
@@ -212,7 +212,7 @@ Client.on('message', message =>{
             text: `Bye bye.`
           }
         }});
-      db.removeCommand(commandToRemove);
+      commandDB.removeCommand(commandToRemove);
     }
 
     //Kick User.
@@ -258,7 +258,7 @@ Client.on('message', message =>{
 
     //list Commands
     else if(command === "commands"){
-      db.currentCommands((commands) => {
+      commandDB.currentCommands((commands) => {
         let commandList = "";
         for(i in commands){
           commandList = `${commandList}\n!${commands[i]}`;
@@ -282,7 +282,7 @@ Client.on('message', message =>{
       Other Commands
     */
     else{
-      db.findCommand(command, (result) =>{
+      commandDB.findCommand(command, (result) =>{
         let guild = message.member.guild;
         if(result === null){
           return;
@@ -355,7 +355,7 @@ Client.on('message', message =>{
         text: `Hope I helped!`
       }
     }});
-    db.currentCommands((commands) => {
+    commandDB.currentCommands((commands) => {
       let commandList = "";
       for(i in commands){
         commandList = `${commandList}\n!${commands[i]}`;
@@ -377,4 +377,4 @@ Client.on('message', message =>{
 });
 
 //This is the bot token that it uses to login.
-Client.login(config.token);
+Client.login(config.tokenDev);
