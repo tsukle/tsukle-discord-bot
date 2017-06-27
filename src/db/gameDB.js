@@ -98,7 +98,7 @@ module.exports = {
                     let gameArray = rows.map((rows) => {
                         return `${rows.gameTitle} - ${rows.gameRole}`;
                     })
-                    callback(gameArray);
+                    callback(rows);
                 }
             });
             statement.finalize();

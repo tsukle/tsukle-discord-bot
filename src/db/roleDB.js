@@ -111,10 +111,10 @@ module.exports = {
         DESCRIPTION: updateRole allows you to update the information in the table based on a roleName key.
         DATE: 26/06/17
     */
-    updateGame: function (roleName, newRoleName, newRoleID, newRoleType){
+    updateRole: function (roleName, newRoleName, newRoleID, newRoleType){
         db.serialize(() => {
             let statement = db.prepare("UPDATE roles SET roleName = ?, roleID = ?, roleType = ? WHERE roleName = ?");
-            statement.run(newRoleName, newRoleID, newRoleType);
+            statement.run(newRoleName, newRoleID, newRoleType, roleName);
             statement.finalize();
         });
     },

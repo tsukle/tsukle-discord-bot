@@ -19,7 +19,7 @@ Client.on('ready', () => {
   commandDB.createTable();
   roleDB.createTable();
   gameDB.createTable();
-  const guild = Client.guilds.find('name', 'tsukle'); //Change this based on server.
+  const guild = Client.guilds.find('name', 'tsukle-dev'); //Change this based on server.
   const channel = guild.channels.find('name', 'general');
   channel.send({embed: {
     color: 0xffff00,
@@ -68,6 +68,7 @@ Client.on('guildMemberAdd', member => {
   DATE: 26/06/17
 */
 Client.on('presenceUpdate', (oldMember, newMember) => {
+  const botGameChannel = newMember.guild.channels.find('name', 'bot-game-suggestions');
   const announcementChannel = newMember.guild.channels.find('name', 'announcements');
   let guild = newMember.guild;
   let game = newMember.user.presence.game;
@@ -84,6 +85,7 @@ Client.on('presenceUpdate', (oldMember, newMember) => {
         roleDB.findRoleByType("Twitch", role =>{
           streamRole = role.roleID;
           if(newMember.roles.has(streamRole)){
+            if(!announcementChannel) return;
             announcementChannel.send({embed: {
               color: 0xffff00,
               author: {
@@ -102,15 +104,29 @@ Client.on('presenceUpdate', (oldMember, newMember) => {
           } else return;
         });
       }
-      gameDB.currentGames(games => {
-        for(i in games){
-          if(game.name === games[i].gameTitle){
-            let role = guild.roles.find("name", games[i].gameRole);
-            if(!role) return;
-            newMember.addRole(role).catch(console.error);
+      else{
+        gameDB.findGame(game.name, gameResult => {
+          if(gameResult === null){
+            if(!botGameChannel) return console.log("botGameChannel doesn't exist. Returning.");
+            botGameChannel.send({embed: {
+              color: 0xffff00,
+              author: {
+                name: "Found something!",
+                icon_url: Client.user.avatarURL
+              },
+              description: `Someone is playing a game that isn't in my database!\nGame Title: ${game.name}`,
+              timestamp: new Date(),
+              footer: {
+                text: `You may want to add it to the database.`
+              }
+            }});
+            return;
           }
-        }
-      });
+          let role = guild.roles.find("name", gameResult.gameRole);
+          if(!role) return console.log(`The role for game: ${gameResult.name}. Could not be found in the role table.`);
+          newMember.addRole(role).catch(console.error);
+        });
+      }
     }
     else if(!game){
       clearRoles(newMember, gameRoleArray);
@@ -221,6 +237,7 @@ Client.on('message', message =>{
       let newRoleName = arguments[1].split(">")[0];
       let newRoleID = arguments[2].split(">")[0];
       let newRoleType = arguments[3].split(">")[0];
+      console.log(`${currentRoleName}`)
       message.channel.send({embed: {
           color: 0xffff00,
           author: {
@@ -233,7 +250,7 @@ Client.on('message', message =>{
             text: `Role ${currentRoleName} updated.`
           }
         }});
-      roleDB.updateRole(currentTitle, newTitle, newRole);
+      roleDB.updateRole(currentRoleName, newRoleName, newRoleID, newRoleType);
     }
 
     //Current Roles | !currentRoles
@@ -509,10 +526,9 @@ function clearRoles(newMember, roleArray){
   for(i in roleArray){
     if(newMember.roles.has(roleArray[i])){
       newMember.removeRole(roleArray[i]).catch(console.error);
-      return;
     }
   } 
 }
 
 //This is the bot token that it uses to login.
-Client.login(config.token);
+Client.login(config.tokenDev);
