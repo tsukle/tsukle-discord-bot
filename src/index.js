@@ -263,7 +263,7 @@ Client.on('message', message =>{
         message.channel.send({embed: {
           color: 0xffff00,
           author: {
-            name: "Current Games!",
+            name: "Current Roles!",
             icon_url: Client.user.avatarURL
           },
           description: `${roleList}\n(${message.author})`,
