@@ -1,5 +1,5 @@
 config/
 config.json
-commands.db
+bot.db
 package-lock.json
 node_modules/
