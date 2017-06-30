@@ -1,5 +1,5 @@
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./db/bot.db');
+const db = new sqlite3.Database('./database/bot.db');
 
 module.exports = {
     /*

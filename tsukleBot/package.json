@@ -1,0 +1,34 @@
+{
+  "name": "tsuklebot",
+  "version": "1.0.0",
+  "description": "Discord chat bot for the tsukle server.",
+  "main": "tsukleBot.js",
+  "scripts": {
+    "start": "nodemon tsukleBot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsukle/tsuklebot-discord.git"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "chat",
+    "javascript",
+    "node",
+    "discord.js"
+  ],
+  "author": "Emilis Tobulevicius",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tsukle/tsuklebot-discord/issues"
+  },
+  "homepage": "https://github.com/tsukle/tsuklebot-discord#readme",
+  "dependencies": {
+    "discord.js": "^11.1.0",
+    "sqlite3": "^3.1.8"
+  },
+  "devDependencies": {
+    "chalk": "^2.0.1"
+  }
+}

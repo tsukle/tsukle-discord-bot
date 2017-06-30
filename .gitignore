@@ -1,6 +1,5 @@
-info.json
-badwords.json
-start.bat
+config/
+config.json
 commands.db
 package-lock.json
 node_modules/

@@ -1,5 +1,5 @@
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./db/bot.db');
+const db = new sqlite3.Database('./database/bot.db');
 
 module.exports = {
     /*
@@ -9,7 +9,7 @@ module.exports = {
     */
     createTable: function (){
         db.serialize(() => {
-            let statement = db.prepare("CREATE TABLE IF NOT EXISTS games (gameTitle TEXT, gameRole)");
+            let statement = db.prepare("CREATE TABLE IF NOT EXISTS games (gameTitle TEXT, gameRole TEXT)");
             statement.run();
             statement.finalize();
         });
@@ -95,9 +95,6 @@ module.exports = {
                     callback(null);
                 }
                 else{
-                    let gameArray = rows.map((rows) => {
-                        return `${rows.gameTitle} - ${rows.gameRole}`;
-                    })
                     callback(rows);
                 }
             });
