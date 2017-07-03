@@ -1,6 +1,7 @@
 const roleDB = require('../database/roleDB.js');
 
 exports.run = function(message, args, client, config){
+    if (message.member.id !== message.guild.ownerID) return;
     let firstSplit = args.split("<").slice(1);
     let currentRoleName = firstSplit[0].split(">")[0];
     let newRoleName = firstSplit[1].split(">")[0];

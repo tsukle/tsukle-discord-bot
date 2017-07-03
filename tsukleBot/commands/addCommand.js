@@ -1,6 +1,7 @@
 const commandDB = require('../database/commandDB.js');
 
 exports.run = function(message, args, client, config){
+    if (message.member.id !== message.guild.ownerID) return;
     let firstSplit = args.split("<").slice(1);
     let commandToAdd = firstSplit[0].split(">")[0];
     let roleToAdd = firstSplit[1].split(">")[0];

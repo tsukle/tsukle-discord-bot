@@ -1,6 +1,7 @@
 const gameDB = require('../database/gameDB.js');
 
 exports.run = function(message, args, client, config){
+    if (message.member.id !== message.guild.ownerID) return;
     gameDB.currentGames((games) => {
         let gameList = "";
         for(i in games){

@@ -1,6 +1,7 @@
 commandDB = require('../database/commandDB.js');
 
 exports.run = function(message, args, client, config){
+    if (message.member.id !== message.guild.ownerID) return;
     commandDB.currentCommands((commands) => {
         let commandList = "";
         for(i in commands){

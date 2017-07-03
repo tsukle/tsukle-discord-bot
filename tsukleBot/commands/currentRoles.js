@@ -1,6 +1,7 @@
 const roleDB = require('../database/roleDB.js');
 
 exports.run = function(message, args, client, config){
+    if (message.member.id !== message.guild.ownerID) return;
     roleDB.currentRoles((roles) => {
         let roleList = "";
         for(i in roles){

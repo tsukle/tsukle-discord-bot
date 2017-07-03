@@ -11,7 +11,7 @@ commandDB.createTable();
 gameDB.createTable();
 roleDB.createTable();
 
-//Event Loader
+//Discord Event Loader
 require('./util/eventLoader')(tsukleBot);
 
 //Login (feed token)

@@ -1,6 +1,7 @@
 const commandDB = require('../database/commandDB.js');
 
 exports.run = function(message, args, client, config){
+    if (message.member.id !== message.guild.ownerID) return;
     let firstSplit = args.split("<").slice(1);
     let commandToRemove = firstSplit[0].split(">")[0];
 
