@@ -13,7 +13,7 @@ module.exports = (message, client, config) => {
         const fullMessage = message.content.split(' ');
         const removeCommand = fullMessage.shift();
         const args = fullMessage.join(' ');
-        const isOwner;
+        let isOwner;
 
         if(message.member.id === message.guild.ownerID){
             isOwner = true;

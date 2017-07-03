@@ -20,7 +20,7 @@ module.exports = (member, client, config) => {
             thumbnail: {
             url: member.user.avatarURL
             },
-            description: `Thanks for joining ${member}!.`,
+            description: `Thanks for joining ${member.user}!.`.toString(),
             timestamp: new Date(),
             footer: {
             icon_url: client.user.avatarURL,

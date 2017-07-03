@@ -15,4 +15,4 @@ roleDB.createTable();
 require('./util/eventLoader')(tsukleBot);
 
 //Login (feed token)
-tsukleBot.login(config.token);
+tsukleBot.login(config.tokenDev);
