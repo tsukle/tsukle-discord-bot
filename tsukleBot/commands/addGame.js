@@ -1,7 +1,7 @@
 const gameDB = require('../database/gameDB.js');
 
-exports.run = function(message, args, client, config){
-    if (message.member.id !== message.guild.ownerID) return;
+exports.run = function(message, args, client, config, owner){
+    if (owner === false) return;
     let firstSplit = message.content.split("<").slice(1);
     let gameTitle = firstSplit[0].split(">")[0];
     let gameRole = firstSplit[1].split(">")[0];

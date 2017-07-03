@@ -1,7 +1,7 @@
 const gameDB = require('../database/gameDB.js');
 
-exports.run = function(message, args, client, config){
-  if (message.member.id !== message.guild.ownerID) return;
+exports.run = function(message, args, client, config, owner){
+  if (owner === false) return;
   let firstSplit = args.split("<").slice(1);
   let gameToRemove = firstSplit[0].split(">")[0];
 

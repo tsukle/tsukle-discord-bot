@@ -13,10 +13,18 @@ module.exports = (message, client, config) => {
         const fullMessage = message.content.split(' ');
         const removeCommand = fullMessage.shift();
         const args = fullMessage.join(' ');
+        const isOwner;
+
+        if(message.member.id === message.guild.ownerID){
+            isOwner = true;
+        }
+        else{
+            isOwner = false;
+        }
 
         try{
             let commandFile = require(`../commands/${command}`);
-            commandFile.run(message, args, client, config);
+            commandFile.run(message, args, client, config, isOwner);
         } catch(e){
             let catcher = require('../commands/commandCatcher/catcher'); //This is for db commands.
             catcher.run(message, command, args, client, config);
