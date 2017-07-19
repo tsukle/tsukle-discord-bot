@@ -28,11 +28,10 @@ module.exports = (oldMember, newMember, client, config) => {
         if(game){
             clearRoles(newMember, gameRoleArray);
             if(game.streaming === true){
-                console.log(`${newMember.user} is streaming. And an announcement can be made.`);
+                console.log(chalkInfo(`${newMember.user} is streaming. And an announcement can be made.`));
                 roleDB.findRoleByType("Twitch", role =>{
                     streamRole = role.roleID;
                     if(newMember.roles.has(streamRole) || newMember.user.id === newMember.guild.ownerID){
-                        if(!announcementChannel) return;
                         announcementChannel.send({embed: {
                             color: 0xffff00,
                             author: {
@@ -48,14 +47,17 @@ module.exports = (oldMember, newMember, client, config) => {
                                 text: "Have a good stream!"
                             }
                         }});
-                        console.log(`${newMember.user} is streaming. And an announcement has been made.`);
+                        console.log(chalkInfo(`${newMember.user} is streaming. And an announcement has been made.`));
                     } else return;
                 });
             }
             else{
                 gameDB.findGame(game.name, gameResult => {
-                    if(gameResult === null){
-                        if(!botGameChannel) return console.log("botGameChannel doesn't exist. Returning.");
+                    if(/[^a-zA-Z0-9]/.test(game.name)){
+                        return;
+                    }
+                    else{
+                        if(gameResult === null){
                             botGameChannel.send({embed: {
                                 color: 0xffff00,
                                 author: {
@@ -68,11 +70,13 @@ module.exports = (oldMember, newMember, client, config) => {
                                     text: `You may want to add it to the database.`
                                 }
                             }});
-                        return;
+                            return;
+                        }
+                        let role = guild.roles.find("name", gameResult.gameRole);
+                        if(!role) return console.log(chalkInfo(`The role for game: ${gameResult.name}. Could not be found in the role table.`));
+                        if(role === "None") return;
+                        newMember.addRole(role).catch(console.error);
                     }
-                    let role = guild.roles.find("name", gameResult.gameRole);
-                    if(!role) return console.log(`The role for game: ${gameResult.name}. Could not be found in the role table.`);
-                    newMember.addRole(role).catch(console.error);
                 });
             }
         }

@@ -8,4 +8,5 @@ module.exports = client => {
     client.on('guildMemberAdd', (member) => reqEvent('guildMemberAdd')(member, client, config));
     client.on('message', (message) => reqEvent('message')(message, client, config));
     client.on('presenceUpdate', (oldMember, newMember) => reqEvent('presenceUpdate')(oldMember, newMember, client, config));
+    client.on('channelPinsUpdate', (channel, time) => reqEvent('channelPinsUpdate')(channel, time, client, config));
 };
