@@ -53,10 +53,9 @@ module.exports = (oldMember, newMember, client, config) => {
             }
             else{
                 gameDB.findGame(game.name, gameResult => {
-                    if(/[^a-zA-Z0-9]/.test(game.name)){
+                    if(/[^a-zA-Z0-9 : -]/.test(game.name)){
                         return;
-                    }
-                    else{
+                    }else{
                         if(gameResult === null){
                             botGameChannel.send({embed: {
                                 color: 0xffff00,
@@ -73,7 +72,7 @@ module.exports = (oldMember, newMember, client, config) => {
                             return;
                         }
                         let role = guild.roles.find("name", gameResult.gameRole);
-                        if(!role) return console.log(chalkInfo(`The role for game: ${gameResult.name}. Could not be found in the role table.`));
+                        if(!role) return console.log(chalkInfo(`The role for game: ${game.name}. Could not be found in the role table.`));
                         if(role === "None") return;
                         newMember.addRole(role).catch(console.error);
                     }
