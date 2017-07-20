@@ -27,29 +27,33 @@ module.exports = (oldMember, newMember, client, config) => {
         }
         if(game){
             clearRoles(newMember, gameRoleArray);
-            if(game.streaming === true){
-                console.log(chalkInfo(`${newMember.user} is streaming. And an announcement can be made.`));
-                roleDB.findRoleByType("Twitch", role =>{
-                    streamRole = role.roleID;
-                    if(newMember.roles.has(streamRole) || newMember.user.id === newMember.guild.ownerID){
-                        announcementChannel.send({embed: {
-                            color: 0xffff00,
-                            author: {
-                                name: "Stream announcement!",
-                                icon_url: client.user.avatarURL
-                            },
-                            thumbnail: {
-                                url: newMember.user.avatarURL
-                            },
-                            description: `Hey! ${newMember.user} is streaming right now! Come join in: ${game.url}`,
-                            timestamp: new Date(),
-                            footer: {
-                                text: "Have a good stream!"
-                            }
-                        }});
-                        console.log(chalkInfo(`${newMember.user} is streaming. And an announcement has been made.`));
-                    } else return;
-                });
+            if(game.streaming == true){
+                if(oldMember.user.presence.game.streaming == true){
+                    return;
+                }else{
+                    console.log(chalkInfo(`${newMember.user} is streaming. And an announcement can be made.`));
+                    roleDB.findRoleByType("Twitch", role =>{
+                        streamRole = role.roleID;
+                        if(newMember.roles.has(streamRole) || newMember.user.id === newMember.guild.ownerID){
+                            announcementChannel.send({embed: {
+                                color: 0xffff00,
+                                author: {
+                                    name: "Stream announcement!",
+                                    icon_url: client.user.avatarURL
+                                },
+                                thumbnail: {
+                                    url: newMember.user.avatarURL
+                                },
+                                description: `Hey! ${newMember.user} is streaming right now! Come join in: ${game.url}`,
+                                timestamp: new Date(),
+                                footer: {
+                                    text: "Have a good stream!"
+                                }
+                            }});
+                            console.log(chalkInfo(`${newMember.user} is streaming. And an announcement has been made.`));
+                        } else return;
+                    });
+                }
             }
             else{
                 gameDB.findGame(game.name, gameResult => {
